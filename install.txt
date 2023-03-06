@@ -1,0 +1,120 @@
+Apache distribution
+XAMPP[X-os, Apache, MySQL or MariaDB, Php, Perl]，where X-os means it can be used on cross-platform(跨平台)
+WAMP [Windows, Apache, MySQL or MariaDB, Php]
+
+安裝XAMPP
+1.以系統管理員身分執行xampp-win32-x.x.x-0-VC11-installer.exe，選擇安裝目錄，例如C:\xampp，目錄中不要出現中文避免錯誤。
+2.以系統管理員身分執行xampp-control.exe，啟動apache，啟動MySQL。
+3.啟動phpmyadmin，建立資料庫(database)，資料表(table)。
+4.下載ODBC drivers。網址：https://dev.mysql.com/downloads/connector/odbc
+5.在PC端，安裝mysql-connector-odbc-x.x.x-winx64.msi。ODBC driver：必須要依應用程式(client application，例如Excel)是32bit或64bit，安裝適合的驅動程式，並非依照Windows作業系統是32bit或64bit。
+6.應用程式(client application，例如Excel)，ConnectionString參數，查詢網站：https://www.connectionstrings.com/
+
+The main XAMPP configuration files are located as follows:
+Apache configuration file: \xampp\apache\conf\httpd.conf, \xampp\apache\conf\extra\httpd-xampp.conf
+PHP configuration file: \xampp\php\php.ini
+MySQL configuration file: \xampp\mysql\bin\my.ini
+FileZilla Server configuration file: \xampp\FileZillaFTP\FileZilla Server.xml
+Apache Tomcat configuration file: \xampp\tomcat\conf\server.xml
+Apache Tomcat configuration file: \xampp\sendmail\sendmail.ini
+Mercury Mail configuration file: \xampp\MercuryMail\MERCURY.INI
+
+xampp upgrade process
+1.備份資料庫，進入phpMyAdmin。匯出，自訂，格式：SQL，資料庫：選擇全部，格式選項：結構與資料
+2.備份c:\xampp\htdocs，c:\xampp\mysql\data，兩個folders
+2.停止xampp。
+3.將舊版的xampp目錄更名，例如更名為c:\xampp-old。
+4.安裝新版的xampp
+5.將步驟2的資料匣，複製到新版的c:\xampp
+
+參考文獻\How-to Easily Upgrade XAMPP on Windows.docx
+How to Update XAMPP in Windows
+To update XAMPP in Windows. Please follow these steps.
+1.Download the latest version of XAMPP
+2.Now backup your existing “htdocs” folder.
+3.Backup your existing “data” folder, which is inside the mysql folder.
+4.Overwrite all the files of existing “xampp” folder with the latest version of “xampp”
+5.If you have installed the installer version of XAMPP then just download the latest installer version of XAMPP and just install the latest version on the same location so it overwrites the existing files.
+6.After overwriting all the files run “setup_xampp.bat“, which is inside the “xampp” folder.
+7.Copy all your sites folder back to “htdocs” folder.
+8.Copy your old “data” folder and paste it inside the “mysql” folder
+9.Now fire up Apache and MySQL
+10.Visit your sites.
+11.If you can visit you sites then its done. But sites that uses MySQL database might cause some problem if you used any other user name and password other than the default xampp password. In that case follow on.
+12.Visit “phpMyAdmin” from http://localhost/phpmyadmin
+13.Press the “Privileges” tab, here if you used “root” user with a password then change the passwords for both root at localhost and 127.0.0.1
+14.If you used a different user name and password all together then create the new user using your old details that you used on your previous XAMPP installation.
+15.Now you should be able to visit your sites that uses MySQL database. eg: Joomla, wordperss etc
+16.Remember if you change the root users passwords then phpMyAdmin will not be able to connect to the MySQL database until you change the phpMyAdmin configuration.
+17.To change phpMyAdmin configuration goto (using file explorer not your browser) “xampp/phpMyAdmin” and open “config.inc.php“
+18.On line 21 of “config.inc.php” type the root users password. eg:$cfg[‘Servers’][$i][‘password’] = ‘root_users_password‘;
+19.If you want then you can change the user name too, in that case you will have provide that users password.
+If you have followed my instructions then you should have a functioning XAMPPP with no issues. If you do face any problem then please leave a comment and I will do my best to get back to you. 
+
+MariaDB
+password:@616217Kyt，預設要依循嚴謹的密碼規則policy
+關閉synology_password_validation，避免要設定很嚴謹的密碼規則policy
+1.stop MariaDB from package center
+2.edit /volume1/@appstore/MariaDB10/usr/local/mariadb10/etc/mysql/my.cnf as root
+ssh登入
+windows command shell>ssh admin@192.168.1.2
+取得root身分
+1.ssh admin@192.168.1.2
+2.Enter the password of your DSM's administrator account
+3.Type sudo -i and press Enter.
+4.Enter the password of your DSM's administrator account again, and press Enter.
+5.You are now signed in to your DSM with root privilege via SSH.
+6.>whoami
+7.vi my.cnf by vi editor
+8.commenting out those two lines with a # in front of them.
+#synology_password_check = FORCE_PLUS_PERMANENT
+#plugin_load_add = synology_password_check
+9.start MariaDB
+10.change root password from phpMyAdmin
+
+定期自動備份MySQL
+軟體：程式集->Windows系統管理工具->工作排程器
+工作排程器->動作->建立工作
+一般：AutoBackup MySQL on Schedule
+觸發程序：
+動作：C:\xampp\mysql\bin\mysqldump.exe --user=root --password=carter@tnesa0901 --databases excel_registration > d:\software\xampp\backup\excel_registration.sql
+
+php.ini修改項目(修改完後要解密，不然無法讀取會出現網站錯誤，重新啟動Apache)
+位置：C:\xampp\php
+路徑：XAMPP Control Panel->Apache->Config->PHP(php.ini)
+opcache.enable=1
+zend_extension=php_opcache.dll(新增)
+max_execution_time=300
+upload_max_filesize=30M(最高上載容量限制)
+post_max_size=40M(POST一次可接受post data的大小)
+memory_limit=256M(注意memory_limit>post_max_size>upload_max_filesize)
+
+settings.php修改項目(修改完要解密，不然無法讀取會出現網站錯誤)
+位置C:\xampp\htdocs\sites\default\settings.php
+trusted_host_patterns複製，貼上至沒有被註解的地方，並將註解前面的"*"刪掉，
+將自己的網域主機加入trusted_host白名單，如下
+$settings['trusted_host_patterns'] = array(
+ '^localhost$',
+);
+
+phpmyadmin
+有兩個可以允許匿名登入的"%"帳號，都刪掉
+hostname"::1"=IPv6 address for localhost. More specifically, the IPv6 address for localhost is 0000:0000:0000:0000:0000:0000:0000:0001, but all those zeros can be abbreviated, shortening the address down to ::1
+
+變更root密碼後，無法登入解決方式
+修改config.inc.php(修改完要解密，不然無法讀取會出現網站錯誤)
+檔案路徑：C:\xampp\phpMyAdmin\config.inc.php
+或從XAMPP Control Panel>Apache>Config>phpMyAdmin(config.inc.php)
+/* Authentication type and info */
+$cfg['Servers'][$i]['auth_type'] = 'cookie'
+$cfg['Servers'][$i]['user'] = 'root'
+$cfg['Servers'][$i]['password'] = 'carter@tnesa0901'
+$cfg['Servers'][$i]['extension'] = 'mysqli';
+$cfg['Servers'][$i]['AllowNoPassword'] = false
+
+How to Create a Data Entry Form in Excel (Step-by-step Guide)
+
+Macros from the internet will be blocked by default in Office
+解決方法，將存放檔案的網域加入信任的網站
+To see a list of trusted sites or what's in the Local intranet zone, go to Control Panel > Internet Options > Change security settings on a Windows device.
+控制台>網際網路選項>安全性>信任的網站，例如file://192.168.0.1
